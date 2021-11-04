@@ -1,0 +1,139 @@
+﻿@model miltron.com.ui.Models.generate_response<int>
+@{
+    var list = new List<miltron.com.ui.Models.Rocket.RocketResponse>();
+    var headers = new Dictionary<string, string>();
+    headers.Add("x-api-key", "API_KEY_1");
+    try
+    {
+        list = miltron.com.ui.utils.service.helper<List<miltron.com.ui.Models.Rocket.RocketResponse>>.get_api_client(miltron.com.ui.utils.enums.http_protocol.get, "/rockets", null, false, null, headers).Result;
+    }
+    catch (Exception)
+    {
+        <text>
+                <script>
+                     window.location.href = '/Rockets/_List';
+                </script>
+            </text>
+    }
+
+}
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        @if (list.Count() != 0)
+        {
+            foreach (var item in list.OrderBy(x => x.model).ToList())
+            {
+                <div class="col-lg-3">
+                    <div class="ibox">
+                        <div class="ibox-content">
+                            <h2 class="m-b-md">
+                                <a data-ajax="true" data-ajax-begin="url_rw('/Rockets/_Details/?id=@item.id', '');loading_start('main');" data-ajax-complete="loading_stop('main')" data-ajax-method="Post" data-ajax-mode="replace" data-ajax-update="#main" href="/Rockets/_Details/?id=@item.id"> @item.model  </a>
+                           </h2>
+                            <small>@item.payload.description</small>
+                            <h2 class="@(item.status=="waiting"?"text-warning":(item.status=="cancelled"?"text-danger":(item.status=="launched"?"text-navy":"text-success"))) text-right">
+                                @item.status <i class="fa @(item.status=="waiting"?"fa-yelp":(item.status=="cancelled"?"fa-play fa-rotate-90":(item.status=="launched"?"fa-play fa-rotate-270":"fa-wpexplorer"))) "></i>
+                            </h2>
+
+                        </div>
+                    </div>
+                </div>}
+        }
+    </div>
+</div>
+<div class="row">
+
+    @if (list.Count() == 50)
+    {
+        foreach (var item in list.OrderBy(x => x.model).ToList())
+        {
+            <div class="col-lg-3">
+                <div class="widget @(item.status=="waiting"?"yellow-bg":(item.status=="cancelled"?"red-bg":(item.status=="launched"?"navy-bg":"lazur-bg")))" style="background-color:#3d4244 !important;color:#ffffff;">
+
+                    <h2>
+                        @item.model
+                    </h2>
+                    <ul class="list-unstyled m-t-md">
+                        <li>
+                            <label>Mass:</label>
+                            @item.mass.ToString("N2")
+                        </li>
+                        <li>
+                            <label>Açıklama:</label>
+                            @item.payload.description
+                        </li>
+                        <li>
+                            <label>Durum:</label>
+                            @item.status
+                        </li>
+                        <li>
+                            <label>Yükseklik:</label>
+                            @item.altitude
+                        </li>
+                        <li>
+                            <label>Hız:</label>
+                            @item.speed
+                        </li>
+                        <li>
+                            <label>Hızlanma:</label>
+                            @item.acceleration
+                        </li>
+                        <li>
+                            <label>Basınç:</label>
+                            @item.thrust.ToString("N2")
+                        </li>
+                        <li>
+                            <label>Sıcaklık:</label>
+                            @item.temperature
+                        </li>
+                    </ul>
+                    @if (item.status == "waiting")
+                    {
+                        <div class="text-center">
+                            <a data-ajax="true" data-ajax-begin="url_rw('/Operations/Clients/Rockets/', '');loading_start('rockets');" data-ajax-complete="loading_stop('rockets')" data-ajax-method="Post" data-ajax-mode="replace" data-ajax-update="#rockets" href="/Rockets/_RocketStatus/?id=@item.id&status=launched" class="btn btn-xs btn-primary">Fırlat <i class="fa fa-long-arrow-right"></i> </a>
+                            <a data-ajax="true" data-ajax-begin="url_rw('/Operations/Clients/Rockets/', '');loading_start('rockets');" data-ajax-complete="loading_stop('rockets')" data-ajax-method="Post" data-ajax-mode="replace" data-ajax-update="#rockets" href="/Rockets/_RocketStatus/?id=@item.id&status=deployed" class="btn btn-xs btn-primary">Konumlandır <i class="fa fa-long-arrow-right"></i> </a>
+                            @*<a href="" class="btn btn-xs btn-primary">Fırlat </a>
+                                <a href="" class="btn btn-xs btn-success"> Konumlandır</a>*@
+                        </div>
+                    }
+                    @if (item.status == "deployed")
+                    {
+                        <div class="text-center">
+                            <a data-ajax="true" data-ajax-begin="url_rw('/Operations/Clients/Rockets/', '');loading_start('rockets');" data-ajax-complete="loading_stop('rockets')" data-ajax-method="Post" data-ajax-mode="replace" data-ajax-update="#rockets" href="/Rockets/_RocketStatus/?id=@item.id&status=cancelled" class="btn btn-xs btn-danger">Vazgeç <i class="fa fa-long-arrow-right"></i> </a>
+
+                            @*<a href="" class="btn btn-xs btn-danger">Vazgeç </a>*@
+                        </div>
+                    }
+                    @if (item.status == "launched")
+                    {
+                        <div class="text-center">
+                            <a data-ajax="true" data-ajax-begin="url_rw('/Operations/Clients/Rockets/', '');loading_start('rockets');" data-ajax-complete="loading_stop('rockets')" data-ajax-method="Post" data-ajax-mode="replace" data-ajax-update="#rockets" href="/Rockets/_RocketStatus/?id=@item.id&status=cancelled" class="btn btn-xs btn-danger">Vazgeç <i class="fa fa-long-arrow-right"></i> </a>
+
+                            @*<a href="" class="btn btn-xs btn-danger">Vazgeç </a>*@
+                        </div>
+                    }
+                    @if (item.status == "cancelled")
+                    {
+                        <div class="text-center">
+                            <a data-ajax="true" data-ajax-begin="url_rw('/Operations/Clients/Rockets/', '');loading_start('rockets');" data-ajax-complete="loading_stop('rockets')" data-ajax-method="Post" data-ajax-mode="replace" data-ajax-update="#rockets" href="/Rockets/_RocketStatus/?id=@item.id&status=launched" class="btn btn-xs btn-primary">Fırlat <i class="fa fa-long-arrow-right"></i> </a>
+                            <a data-ajax="true" data-ajax-begin="url_rw('/Operations/Clients/Rockets/', '');loading_start('rockets');" data-ajax-complete="loading_stop('rockets')" data-ajax-method="Post" data-ajax-mode="replace" data-ajax-update="#rockets" href="/Rockets/_RocketStatus/?id=@item.id&status=deployed" class="btn btn-xs btn-primary">Konumlandır <i class="fa fa-long-arrow-right"></i> </a>
+
+                            @*<a href="" class="btn btn-xs btn-primary">Fırlat </a>
+                                <a href="" class="btn btn-xs btn-success"> Konumlandır</a>*@
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<script>
+    setInterval(function () {
+        window.location.href = '/Rockets/_List';
+    }, 100000); //Every 1000ms = 1sec
+
+</script>
+@if (Model != null && Model.notify != null && Model.notify.typ != miltron.com.ui.utils.enums.notify.none)
+{
+    @Html.Partial("/views/Shared/_Notify.cshtml", Model.notify)
+}

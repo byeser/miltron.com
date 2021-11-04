@@ -1,0 +1,207 @@
+﻿@model miltron.com.ui.Models.generate_response<miltron.com.ui.Models.Rocket.RocketResponse>
+@{
+    if (Model == null)
+    {
+        <text>
+            <script>
+                window.location.href = '/Rockets/_List';
+            </script>
+        </text>
+    }
+    var data = new miltron.com.ui.Models.Weather.WeatherResponse();
+    var headers = new Dictionary<string, string>();
+    headers.Add("x-api-key", "API_KEY_1");
+    try
+    {
+        data = miltron.com.ui.utils.service.helper<miltron.com.ui.Models.Weather.WeatherResponse>.get_api_client(miltron.com.ui.utils.enums.http_protocol.get, "/weather", null, false, null, headers).Result;
+    }
+    catch (Exception)
+    {
+
+    }
+}
+<div class="wrapper wrapper-content animated fadeInUp">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="m-b-md">
+
+                                @if (Model != null)
+                                {
+                                    if (Model.data != null)
+                                    {
+                                        <h2 class="pull-right @(Model.data.status == "waiting" ? "text-warning" : (Model.data.status == "cancelled" ? "text-danger" : (Model.data.status == "launched" ? "text-navy" : "text-success"))) text-right">
+                                            @Model.data.status <i class="fa @(Model.data.status == "waiting" ? "fa-yelp" : (Model.data.status == "cancelled" ? "fa-play fa-rotate-90" : (Model.data.status == "launched" ? "fa-play fa-rotate-270" : "fa-wpexplorer"))) "></i>
+                                        </h2>
+                                        if (Model.data.status == "waiting")
+                                        {
+                                            <a data-ajax="true" data-ajax-begin="url_rw('/Rockets/_Details/?id=@Model.data.id', '');loading_start('main');" data-ajax-complete="loading_stop('main')" data-ajax-method="Post" data-ajax-mode="replace" data-ajax-update="#main" href="/Rockets/_RocketStatus/?id=@Model.data.id&status=launched" class="btn btn-primary btn-xs pull-right" style="margin-right:10px;margin-top:10px;">Launch</a>
+                                            <a data-ajax="true" data-ajax-begin="url_rw('/Rockets/_Details/?id=@Model.data.id', '');loading_start('main');" data-ajax-complete="loading_stop('main')" data-ajax-method="Post" data-ajax-mode="replace" data-ajax-update="#main" href="/Rockets/_RocketStatus/?id=@Model.data.id&status=deployed" class="btn btn-success btn-xs pull-right" style="margin-right:10px;margin-top:10px;">Deploy</a>
+                                        }
+                                        if (Model.data.status == "launched")
+                                        {
+                                            <a data-ajax="true" data-ajax-begin="url_rw('/Rockets/_Details/?id=@Model.data.id', '');loading_start('main');" data-ajax-complete="loading_stop('main')" data-ajax-method="Post" data-ajax-mode="replace" data-ajax-update="#main" href="/Rockets/_RocketStatus/?id=@Model.data.id&status=launched" class="btn btn-danger btn-xs pull-right" style="margin-right:10px;margin-top:10px;">Cancel</a>
+                                            <a data-ajax="true" data-ajax-begin="url_rw('/Rockets/_Details/?id=@Model.data.id', '');loading_start('main');" data-ajax-complete="loading_stop('main')" data-ajax-method="Post" data-ajax-mode="replace" data-ajax-update="#main" href="/Rockets/_RocketStatus/?id=@Model.data.id&status=deployed" class="btn btn-success btn-xs pull-right" style="margin-right:10px;margin-top:10px;">Deploy</a>
+                                        }
+                                        if (Model.data.status == "deployed")
+                                        {
+                                            <a data-ajax="true" data-ajax-begin="url_rw('/Rockets/_Details/?id=@Model.data.id', '');loading_start('main');" data-ajax-complete="loading_stop('main')" data-ajax-method="Post" data-ajax-mode="replace" data-ajax-update="#main" href="/Rockets/_RocketStatus/?id=@Model.data.id&status=deployed" class="btn btn-success btn-xs pull-right" style="margin-right:10px;margin-top:10px;">Deploy</a>
+                                        }
+                                        if (Model.data.status == "cancelled")
+                                        {
+                                            <a data-ajax="true" data-ajax-begin="url_rw('/Rockets/_Details/?id=@Model.data.id', '');loading_start('main');" data-ajax-complete="loading_stop('main')" data-ajax-method="Post" data-ajax-mode="replace" data-ajax-update="#main" href="/Rockets/_RocketStatus/?id=@Model.data.id&status=launched" class="btn btn-primary btn-xs pull-right" style="margin-right:10px;margin-top:10px;">Launch</a>
+                                        }
+                                    }
+                                }
+                                <h1> @(Model == null ? "" : (Model.data == null ? "" : Model.data.model))</h1>
+                            </div>
+                            <p>
+                                @(Model == null ? "" : (Model.data == null ? "" : Model.data.payload.description))
+                            </p>
+
+
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="client-detail">
+                                <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 100%;">
+                                    <div class="full-height-scroll" style="overflow: hidden; width: auto; height: 100%;">
+                                        <br />
+                                        <br />
+                                        <br />
+                                        <strong>Technical detail</strong>
+
+                                        <ul class="list-group clear-list">
+                                            <li class="list-group-item fist-item">
+                                                <span class="pull-right">  @((Model == null || Model.data == null) ? "" : Model.data.mass.ToString()) </span>
+                                                Mass
+                                            </li>
+                                            <li class="list-group-item">
+                                                <span class="pull-right"> @((Model == null || Model.data == null) ? 0 : Model.data.payload.weight) </span>
+                                                Weigth
+                                            </li>
+                                            <li class="list-group-item">
+                                                <span class="pull-right"> @((Model == null || Model.data == null) ? null : Model.data.timestamps.launched)</span>
+                                                Launched
+                                            </li>
+                                            <li class="list-group-item">
+                                                <span class="pull-right"> @((Model == null || Model.data == null) ? null : Model.data.timestamps.deployed) </span>
+                                                Deployed
+                                            </li>
+                                            <li class="list-group-item">
+                                                <span class="pull-right"> @((Model == null || Model.data == null) ? null : Model.data.timestamps.failed) </span>
+                                                Failed
+                                            </li>
+                                            <li class="list-group-item">
+                                                <span class="pull-right"> @((Model == null || Model.data == null) ? null : Model.data.timestamps.cancelled) </span>
+                                                Cancelled
+                                            </li>
+                                            <li class="list-group-item">
+                                                <span class="pull-right"> @((Model == null || Model.data == null) ? 0 : Model.data.altitude) </span>
+                                                Altitude
+                                            </li>
+                                            <li class="list-group-item">
+                                                <span class="pull-right"> @((Model == null || Model.data == null) ? 0 : Model.data.speed) </span>
+                                                Speed
+                                            </li>
+                                            <li class="list-group-item">
+                                                <span class="pull-right"> @((Model == null || Model.data == null) ? 0 : Model.data.acceleration) </span>
+                                                Acceleration
+                                            </li>
+                                            <li class="list-group-item">
+                                                <span class="pull-right"> @((Model == null || Model.data == null) ? 0 : Model.data.thrust) </span>
+                                                Thrust
+                                            </li>
+                                            <li class="list-group-item">
+                                                <span class="pull-right"> @((Model == null || Model.data == null) ? 0 : Model.data.temperature) </span>
+                                                Temperature
+                                            </li>
+                                        </ul>
+                                        <strong>Description</strong>
+                                        <p>
+                                            @((Model == null || Model.data == null) ? "" : Model.data.payload.description)
+                                        </p>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="client-detail">
+                                <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 100%;">
+                                    <div class="full-height-scroll" style="overflow: hidden; width: auto; height: 100%;">
+                                        <br />
+                                        <br />
+                                        <br />
+                                        <strong>Weather</strong>
+
+                                        <ul class="list-group clear-list">
+                                            <li class="list-group-item fist-item">
+                                                <span class="pull-right">  @((data == null) ? 0 : data.temperature) </span>
+                                                Temperature
+                                            </li>
+                                            <li class="list-group-item">
+                                                <span class="pull-right">  @((data == null) ? 0 : data.humidity) </span>
+                                                Humidity
+                                            </li>
+                                            <li class="list-group-item">
+                                                <span class="pull-right">  @((data == null) ? 0 : data.pressure) </span>
+                                                Pressure
+                                            </li>
+                                            <li class="list-group-item">
+                                                <span class="pull-right">  @((data == null) ? 0 : data.precipitation.probability) </span>
+                                                Probability
+                                            </li>
+                                            <li class="list-group-item">
+                                                <span class="pull-right">  @((data == null) ? false : data.precipitation.rain) </span>
+                                                Rain
+                                            </li>
+                                            <li class="list-group-item">
+                                                <span class="pull-right">  @((data == null) ? false : data.precipitation.snow) </span>
+                                                Snow
+                                            </li>
+                                            <li class="list-group-item">
+                                                <span class="pull-right">  @((data == null) ? false : data.precipitation.sleet) </span>
+                                                Sleet
+                                            </li>
+                                            <li class="list-group-item">
+                                                <span class="pull-right">  @((data == null) ? false : data.precipitation.hail) </span>
+                                                Hail
+                                            </li>
+                                            <li class="list-group-item">
+                                                <span class="pull-right">  @((data == null) ? DateTime.Now : data.time) </span>
+                                                Time
+                                            </li>
+                                            <li class="list-group-item">
+                                                <span class="pull-right">  @((data == null) ? "" : data.wind.direction) </span>
+                                                Direction
+                                            </li>
+                                            <li class="list-group-item">
+                                                <span class="pull-right">  @((data == null) ? 0 : data.wind.angle) </span>
+                                                angle
+                                            </li>
+                                            <li class="list-group-item">
+                                                <span class="pull-right">  @((data == null) ? 0 : data.wind.speed) </span>
+                                                Speed
+                                            </li>
+                                        </ul>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@if (Model != null && Model.notify != null && Model.notify.typ != miltron.com.ui.utils.enums.notify.none)
+{
+    @Html.Partial("/views/Shared/_Notify.cshtml", Model.notify)
+}
